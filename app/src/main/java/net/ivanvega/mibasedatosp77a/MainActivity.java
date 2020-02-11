@@ -16,6 +16,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
@@ -26,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
     private ListView lv;
     private SimpleCursorAdapter adp;
     DAOContactos dao ;
+    ListView lv;
+    EditText txt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,16 +94,32 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void recargaAdaptadorConCursor(Cursor c) {
-        adp = new SimpleCursorAdapter(
-                this,
-                android.R.layout.simple_list_item_2,
-                c,
-                new String[]{"usuario","email"},
-                new int[]{android.R.id.text1, android.R.id.text2
-                },
-                SimpleCursorAdapter.IGNORE_ITEM_VIEW_TYPE
+        DAOContactos dao = new DAOContactos(this);
+        dao.insert(new Contacto(0, "perronegro",
+                "perronegro@","445"));
+        dao.insert(new Contacto(0, "perroblanco",
+                "perroblanco@","544"));
+         for (Contacto c : dao.getAll()){
+             Toast.makeText(this,
+                     c.usuario,
+                     Toast.LENGTH_SHORT).show();
+         }
 
-        );
+
+         lv = findViewById(R.id.lv);
+
+
+        SimpleCursorAdapter adp =
+                new SimpleCursorAdapter(
+                        this,
+                        android.R.layout.simple_list_item_2,
+                        dao.getAllCursor(),
+                        new String[]{"usuario","email"},
+                        new int[]{android.R.id.text1, android.R.id.text2
+                        },
+                        SimpleCursorAdapter.IGNORE_ITEM_VIEW_TYPE
+
+                );
         lv.setAdapter(adp);
     }
 
